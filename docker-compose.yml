@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16
+    container_name: catalogo_rocket_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: rocket
+      POSTGRES_PASSWORD: Por@l003
+      POSTGRES_DB: catalogo_rocket
+    ports:
+      - "5432:5432"
+    volumes:
+      - datos_postgres:/var/lib/postgresql/data
+
+volumes:
+  datos_postgres:

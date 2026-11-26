@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Categoria {
+  id          Int        @id @default(autoincrement())
+  nombre      String     @unique
+  slug        String     @unique   // URL FOR WEB.
+  productos   Producto[]
+}
+
+model Producto {
+  id               Int       @id @default(autoincrement())
+  codigo           String    @unique
+  nombre           String
+  slug             String    @unique
+  descripcion      String
+  precioBase       Decimal   @db.Decimal(10, 2)
+  enPromocion      Boolean   @default(false)
+  precioPromocion  Decimal?  @db.Decimal(10, 2)
+  promocionHasta   DateTime?
+  activo           Boolean   @default(true)
+  creadoEn         DateTime  @default(now())
+
+  categoria        Categoria @relation(fields: [categoriaId], references: [id])
+  categoriaId      Int
+
+  imagenes         ImagenProducto[]
+  opciones         OpcionProducto[]
+}
+
+model ImagenProducto {
+  id          Int      @id @default(autoincrement())
+  url         String
+  orden       Int      @default(0)   
+
+  producto    Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  productoId  Int
+}
+
+model OpcionProducto {
+  id          Int      @id @default(autoincrement()) //id of the option
+  tipo        String   //"size", "color", "tamaño".
+  valor       String   // "M", "Blanco", "11oz".
+
+  producto    Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  productoId  Int
+}
